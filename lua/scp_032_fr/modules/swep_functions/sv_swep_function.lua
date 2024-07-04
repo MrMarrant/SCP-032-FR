@@ -15,42 +15,81 @@
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 SCP_032_FR_CONFIG.ActionAmmo = {
-    ["XVII"] = function (x) scp_032_fr.XVII() end,
-    ['LXII'] = function (x) scp_032_fr.LXII() end,
-    ["nulla"] = function (x) scp_032_fr.nulla() end,
-    ["MMII"] = function (x) scp_032_fr.MMII() end,
+    ["XVII"] = function (gun) scp_032_fr.XVII(gun) end,
+    ['LXII'] = function (gun) scp_032_fr.LXII(gun) end,
+    ["nulla"] = function (gun) scp_032_fr.nulla(gun) end,
+    ["MMII"] = function (gun) scp_032_fr.MMII(gun) end,
   }
+
+  
+function scp_032_fr.CreateEnt(name)
+	local ent = ents.Create( name )
+	if (not IsValid(ent)) then return false end
+	ent:Spawn()
+	ent:Activate()
+
+	return ent
+end
+
+
+function scp_032_fr.CreateProp(ply)
+    local LookForward = ply:EyeAngles():Forward()
+	local LookUp = ply:EyeAngles():Up()
+	local ent = scp_032_fr.CreateEnt("prop_physics")
+	local DistanceToPos = 50
+	local PosObject = (ply:IsPlayer() and ply:GetShootPos() or ply:GetPos()) + LookForward * DistanceToPos + LookUp
+    PosObject.z = ply:GetPos().z
+
+	ent:SetPos( PosObject )
+	ent:SetAngles( ply:EyeAngles() )
+
+    return ent
+end
 
 --[[
 * Shoot with the gun depend on the ammo type
 --]]
-function scp_032_fr.Shoot(AmmoType)
-    SCP_032_FR_CONFIG.ActionAmmo[AmmoType]
+function scp_032_fr.Shoot(AmmoType, gun)
+    SCP_032_FR_CONFIG.ActionAmmo[AmmoType](gun)
 end
+
+-- [[ *  Gun Type Functions  *]]
 
 --[[
 * Shoot 9mm pistol
 --]]
-function scp_032_fr.XVII()
-    -- TODO : make like the regular pistol (sound & shoot feeling)
+function scp_032_fr.XVII(gun)
+    gun:ShootBullet( 20, 1, 0.01 )
+    gun:GetOwner():ViewPunch( Angle( -1, 0, 0 ) )
+    gun:EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
 end
 
 --[[
 * Set the player in the sky
 --]]
-function scp_032_fr.LXII()
-    -- TODO : Tp the player very high
+function scp_032_fr.LXII(gun)
+    local ply = gun:GetOwner()
+    local CurrentPos = ply:GetPos()
+    CurrentPos.z = 9999 -- TODO : Vérifier ça
+    ply:SetPos()
 end
 
 --[[
 * Nothing bhahahahaha
 --]]
-function scp_032_fr.nulla()
+function scp_032_fr.nulla(gun)
 end
 
 --[[
 * Shoot this gun
 --]]
-function scp_032_fr.MMII()
+function scp_032_fr.MMII(gun)
     -- TODO : Spawn the model gun (not fast, it just have to travel 2-3m)
+    local ply = gun:GetOwner()
+	local ent = scp_032_fr.CreateProp(ply)
+    ent:SetModel("")
+    local phys = ent:GetPhysicsObject()
+	phys:EnableMotion( true )
+	phys:Wake()
+	ent:GetPhysicsObject():SetVelocity( ply:EyeAngles():Forward() * 100 ) -- TODO : test ça aussi
 end

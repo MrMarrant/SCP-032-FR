@@ -81,6 +81,7 @@ function SWEP:PrimaryAttack()
 	local VMAnim = ply:GetViewModel()
 
     VMAnim:SendViewModelMatchingSequence( VMAnim:LookupSequence( "shoot" ) )
+    scp_032_fr.Shoot(ply.SCP032FR_AmmoType, self)
 end
 
 function SWEP:SecondaryAttack()
