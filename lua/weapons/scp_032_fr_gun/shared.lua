@@ -24,8 +24,8 @@ SWEP.SlotPos = 1
 SWEP.Spawnable = true
 
 SWEP.Category = "SCP"
-SWEP.ViewModel = Model( "models/weapons/v_scp032fr/v_scp032fr.mdl" )
-SWEP.WorldModel = Model( "models/weapons/w_scp032fr/w_scp032fr.mdl" )
+SWEP.ViewModel = "" --Model( "models/weapons/v_scp032fr/v_scp032fr.mdl" )
+SWEP.WorldModel = "" --Model( "models/weapons/w_scp032fr/w_scp032fr.mdl" )
 
 SWEP.ViewModelFOV = 65
 SWEP.HoldType = "pistol"
@@ -50,8 +50,11 @@ SWEP.PrimaryCooldown = 2
 
 function SWEP:Initialize()
 	self:SetHoldType( self.HoldType )
-    self:SetAmmoType()
 	self:SetPlaybackRate( GetConVarNumber( "sv_defaultdeployspeed" ) )
+end
+
+function SWEP:Equip()
+	self:SetAmmoType()
 end
 
 function SWEP:Deploy()
@@ -69,6 +72,7 @@ function SWEP:Deploy()
 end
 
 function SWEP:PrimaryAttack()
+	if CLIENT then return end
 	local CurrentTime = CurTime()
 	self:SetNextPrimaryFire( CurrentTime + self.PrimaryCooldown )
 
@@ -76,7 +80,6 @@ function SWEP:PrimaryAttack()
     if (ply.SCP032FR_AmmoLeft <= 0) then return end
 
     ply.SCP032FR_AmmoLeft = ply.SCP032FR_AmmoLeft - 1
-	if CLIENT then return end
 
 	local VMAnim = ply:GetViewModel()
 
@@ -96,6 +99,6 @@ function SWEP:SetAmmoType()
     local ply = self:GetOwner()
     -- TODO : Set le type de mun et son nombre de mun
     if (not IsValid(ply.SCP032FR_AmmoType)) then
-        InitAmmoType(ply, self)
+        scp_032_fr.InitAmmoType(ply, self)
     end
 end

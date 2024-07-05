@@ -24,20 +24,12 @@ SWEP.Base = "weapon_base"
 SWEP.AutoSwitchTo = false
 
 
-local panelPassword = Material( "card_scp055/panel_password.png" )
+-- TODO : Afficher Le type de mun de l'arme actuelle
 
 function SWEP:DrawHUD()
-    if (self:GetIsCheck()) then
-        surface.SetMaterial( panelPassword )
-        surface.SetDrawColor( 255, 255, 255, 255 )
-        surface.DrawTexturedRect( SCP_055_CONFIG.ScrW *0.27, SCP_055_CONFIG.ScrH * 0.3, SCP_055_CONFIG.ScrW * 0.5, SCP_055_CONFIG.ScrH * 0.5 )
-    end
-end
-
-function SWEP:OnRemove()
     local ply = self:GetOwner()
-    if (IsValid(ply.SCP055_PanelPassword)) then
-        ply.SCP055_PanelPassword:Remove()
-        ply.SCP055_PanelPassword = nil
-    end
+
+    surface.SetDrawColor( 0, 0, 0, 0)
+    surface.DrawRect(0, 0, SCP_032_FR_CONFIG.ScrW, SCP_032_FR_CONFIG.ScrH)
+    draw.DrawText( ply.SCP032FR_AmmoType, "SCP032FR_RomanNumeral", SCP_032_FR_CONFIG.ScrW *0.372, SCP_032_FR_CONFIG.ScrH * 0.55, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER )
 end

@@ -14,11 +14,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-hook.Add( "PlayerDeath", "PlayerDeath.SCP032FR_Died", function( victim, inflictor, attacker )
--- TODO : Virer le type de munition des joueurs s'ils ont eu une munition assigné.
-    victim.SCP032FR_AmmoType = nil
-    victim.SCP032FR_AmmoLeft = nil
-    -- TODO : Set coté client aussi 
-end)
+SCP_032_FR_CONFIG.ScrW = ScrW()
+SCP_032_FR_CONFIG.ScrH = ScrH()
 
-util.AddNetworkString(SCP_032_FR_CONFIG.SendDataAmmo)
+
+-- TODO : Police de chiffre romain
+surface.CreateFont( "SCP032FR_RomanNumeral", {
+    font = "Arial",
+    size = 90
+} )

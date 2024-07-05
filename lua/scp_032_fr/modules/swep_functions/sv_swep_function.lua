@@ -19,9 +19,22 @@ SCP_032_FR_CONFIG.ActionAmmo = {
     ['LXII'] = function (gun) scp_032_fr.LXII(gun) end,
     ["nulla"] = function (gun) scp_032_fr.nulla(gun) end,
     ["MMII"] = function (gun) scp_032_fr.MMII(gun) end,
-  }
+}
 
-  
+function scp_032_fr.InitAmmoType(ply, gun)
+    local AmmoSelected = SCP_032_FR_CONFIG.KeyAmmoType[ math.random( #SCP_032_FR_CONFIG.KeyAmmoType ) ]-- TODO : Verifier qu'il renvoie bien l'index!
+    ply.SCP032FR_AmmoType = AmmoSelected
+
+    local AmmoLeft = SCP_032_FR_CONFIG.AmmoType[AmmoSelected].TotalAmmo
+    ply.SCP032FR_AmmoLeft = AmmoLeft
+
+    gun.PrimaryCooldown = SCP_032_FR_CONFIG.AmmoType[AmmoSelected].CDShoot
+
+    net.Start(SCP_032_FR_CONFIG.SendDataAmmo)
+        net.WriteString(AmmoSelected)
+    net.Send(ply)
+end
+
 function scp_032_fr.CreateEnt(name)
 	local ent = ents.Create( name )
 	if (not IsValid(ent)) then return false end
@@ -61,7 +74,7 @@ end
 function scp_032_fr.XVII(gun)
     gun:ShootBullet( 20, 1, 0.01 )
     gun:GetOwner():ViewPunch( Angle( -1, 0, 0 ) )
-    gun:EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
 end
 
 --[[
@@ -71,7 +84,7 @@ function scp_032_fr.LXII(gun)
     local ply = gun:GetOwner()
     local CurrentPos = ply:GetPos()
     CurrentPos.z = 9999 -- TODO : Vérifier ça
-    ply:SetPos()
+    ply:SetPos(CurrentPos)
 end
 
 --[[
@@ -87,7 +100,7 @@ function scp_032_fr.MMII(gun)
     -- TODO : Spawn the model gun (not fast, it just have to travel 2-3m)
     local ply = gun:GetOwner()
 	local ent = scp_032_fr.CreateProp(ply)
-    ent:SetModel("")
+    ent:SetModel("models/props_borealis/bluebarrel001.mdl")
     local phys = ent:GetPhysicsObject()
 	phys:EnableMotion( true )
 	phys:Wake()

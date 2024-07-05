@@ -32,3 +32,10 @@ SCP_032_FR_CONFIG.AmmoType = {
         CDShoot = 1
     }
 }
+SCP_032_FR_CONFIG.KeyAmmoType = {}
+for key, value in pairs(SCP_032_FR_CONFIG.AmmoType) do
+    table.insert(SCP_032_FR_CONFIG.KeyAmmoType, key)
+end
+
+-- NET VAR
+SCP_032_FR_CONFIG.SendDataAmmo = "SCP_032_FR_CONFIG.SendDataAmmo"

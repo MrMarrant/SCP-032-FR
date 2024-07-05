@@ -14,10 +14,10 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-function scp_032_fr.InitAmmoType(ply, gun)
-    local AmmoSelected = math.random( #SCP_032_FR_CONFIG.AmmoType ) -- TODO : Verifier qu'il renvoie bien l'index!
-    ply.SCP032FR_AmmoType = AmmoSelected
-    ply.SCP032FR_AmmoLeft = SCP_032_FR_CONFIG.AmmoType[AmmoSelected].TotalAmmo
 
-    gun.PrimaryCooldown = SCP_032_FR_CONFIG.AmmoType[AmmoSelected].CDShoot
-end
+net.Receive( SCP_032_FR_CONFIG.SendDataAmmo, function()
+    local ply = LocalPlayer()
+    local ammoType = net.ReadString()
+
+    ply.SCP032FR_AmmoType = ammoType
+end)
