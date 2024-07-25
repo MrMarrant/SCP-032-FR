@@ -17,7 +17,7 @@
 SCP_032_FR_CONFIG.AmmoType = {
     XVII = {
         TotalAmmo = 17,
-        CDShoot = 0.5
+        CDShoot = 0.2
     },
     LXII = {
         TotalAmmo = 62,
@@ -30,6 +30,30 @@ SCP_032_FR_CONFIG.AmmoType = {
     MMII = {
         TotalAmmo = 2002,
         CDShoot = 1
+    },
+    XC = {
+        TotalAmmo = 90,
+        CDShoot = 10
+    },
+    MMMM = {
+        TotalAmmo = 4000,
+        CDShoot = 0.1
+    },
+    X = {
+        TotalAmmo = 10,
+        CDShoot = 3
+    },
+    XXII = {
+        TotalAmmo = 22,
+        CDShoot = 10
+    },
+    XXIII = {
+        TotalAmmo = 23,
+        CDShoot = 10
+    },
+    CCCXII = {
+        TotalAmmo = 312,
+        CDShoot = 2
     }
 }
 SCP_032_FR_CONFIG.KeyAmmoType = {}

@@ -10,7 +10,9 @@ Install the addon from the workshop page or by downloading the zip and placing i
 
 ## 🛠️ Functionality
 
-*  
+*  Firing a multitude of different ammunition (15 différents)
+*  Multitude of models and effect for each ammo
+*  Fun gun for roleplay experience, or just chaos
 
 ## 🤝 Credits
 

@@ -14,11 +14,24 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+SCP_032_FR_CONFIG.ModelBowling = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelTrain = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelQuartz = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelPlasticCup = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelBlueWhale = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelSCP032FR = "models/props_borealis/bluebarrel001.mdl"
+
 SCP_032_FR_CONFIG.ActionAmmo = {
     ["XVII"] = function (gun) scp_032_fr.XVII(gun) end,
     ['LXII'] = function (gun) scp_032_fr.LXII(gun) end,
     ["nulla"] = function (gun) scp_032_fr.nulla(gun) end,
     ["MMII"] = function (gun) scp_032_fr.MMII(gun) end,
+    ["XC"] = function (gun) scp_032_fr.XC(gun) end,
+    ["MMMM"] = function (gun) scp_032_fr.MMMM(gun) end,
+    ["X"] = function (gun) scp_032_fr.X(gun) end,
+    ["XXII"] = function (gun) scp_032_fr.XXII(gun) end,
+    ["XXIII"] = function (gun) scp_032_fr.XXIII(gun) end,
+    ["CCCXII"] = function (gun) scp_032_fr.CCCXII(gun) end,
 }
 
 function scp_032_fr.InitAmmoType(ply, gun)
@@ -57,6 +70,18 @@ function scp_032_fr.CreateProp(ply)
 	ent:SetAngles( ply:EyeAngles() )
 
     return ent
+end
+
+function scp_032_fr.SetEntParam(ent, model)
+    ent:SetModel(model)
+    local phys = ent:GetPhysicsObject()
+	phys:EnableMotion( true )
+	phys:Wake()
+end
+
+
+function scp_032_fr.ShootAnEnt(ply, ent, speed)
+    ent:GetPhysicsObject():SetVelocity( ply:EyeAngles():Forward() * speed )
 end
 
 --[[
@@ -100,9 +125,68 @@ function scp_032_fr.MMII(gun)
     -- TODO : Spawn the model gun (not fast, it just have to travel 2-3m)
     local ply = gun:GetOwner()
 	local ent = scp_032_fr.CreateProp(ply)
-    ent:SetModel("models/props_borealis/bluebarrel001.mdl")
-    local phys = ent:GetPhysicsObject()
-	phys:EnableMotion( true )
-	phys:Wake()
-	ent:GetPhysicsObject():SetVelocity( ply:EyeAngles():Forward() * 100 ) -- TODO : test ça aussi
+    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelSCP032FR)
+	scp_032_fr.ShootAnEnt(ply, ent, 100)
+end
+
+--[[
+* Shoot ball of bowling
+* Nice Strike
+--]]
+function scp_032_fr.X(gun)
+    local ply = gun:GetOwner()
+	local ent = scp_032_fr.CreateProp(ply)
+    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBowling)
+	scp_032_fr.ShootAnEnt(ply, ent, 1000)
+    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+end
+
+--[[
+* Shoot a train
+--]]
+function scp_032_fr.XXIII(gun)
+    local ply = gun:GetOwner()
+	local ent = scp_032_fr.CreateProp(ply)
+    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBowling)
+	scp_032_fr.ShootAnEnt(ply, ent, 1000)
+    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+end
+
+--[[
+* Shoot a blue whale
+--]]
+function scp_032_fr.XXII(gun)
+    local ply = gun:GetOwner()
+	local ent = scp_032_fr.CreateProp(ply)
+    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBlueWhale)
+	scp_032_fr.ShootAnEnt(ply, ent, 300)
+    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+end
+
+--[[
+* Shoot a cup of plastic
+--]]
+function scp_032_fr.CCCXII(gun)
+    local ply = gun:GetOwner()
+	local ent = scp_032_fr.CreateProp(ply)
+    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelPlasticCup)
+	scp_032_fr.ShootAnEnt(ply, ent, 1000)
+    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+end
+
+--[[
+* Set a enourmous sound & accouphene
+--]]
+function scp_032_fr.XC(gun)
+    local ply = gun:GetOwner()
+    ply:EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+end
+
+--[[
+* Shoot hair
+--]]
+function scp_032_fr.MMMM(gun)
+    gun:ShootBullet( 1, 1, 0.01 )
+    gun:GetOwner():ViewPunch( Angle( -1, 0, 0 ) )
+    --gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
 end
