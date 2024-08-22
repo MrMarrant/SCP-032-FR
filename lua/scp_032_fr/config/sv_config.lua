@@ -18,6 +18,9 @@ hook.Add( "PlayerDeath", "PlayerDeath.SCP032FR_Died", function( victim, inflicto
 -- TODO : Virer le type de munition des joueurs s'ils ont eu une munition assigné.
     victim.SCP032FR_AmmoType = nil
     victim.SCP032FR_AmmoLeft = nil
+    victim:SetDSP(1, false)
+    victim:StopSound("")
+    victim.SCP023_AffectTinnitus = nil
     -- TODO : Set coté client aussi 
 end)
 

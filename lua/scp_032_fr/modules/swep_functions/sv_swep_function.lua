@@ -207,12 +207,17 @@ end
 --[[
 * Set a enourmous sound & accouphene
 --]]
+--TODO : A test
 function scp_032_fr.XC(gun)
     local ply = gun:GetOwner()
+    local radiusEffect = 3000
     -- TODO : SFX
     ply:EmitSound("", 75, math.random(90, 110))
-    -- TODO : Trouve run moyen de produire l'effet accouphene 
-    -- comme quand on se prend une grenade par ex.
+    for _, ent in pairs(player.GetAll()) do
+        if ent:GetPos():Distance(ply:GetPos()) <= radiusEffect then
+            scp_032_fr.ApplyTinnitusEffect(ent)
+        end
+    end
 end
 
 --[[
@@ -241,4 +246,22 @@ function scp_032_fr.QuakeEffect(ent)
     )
 
     phys:ApplyForceCenter(forceEQ)
+end
+
+function scp_032_fr.ApplyTinnitusEffect(ply)
+    if not IsValid(ply) or not ply:IsPlayer() then return end
+
+    ply:SetDSP(35, false) -- Disable Sounds
+    -- TODO : SFX
+    ply:EmitSound("", 75, math.random(90, 110))
+    ply.SCP023_AffectTinnitus = true
+
+    timer.Simple(10, function()
+        if not IsValid(ply) then return end
+        if ply.SCP023_AffectTinnitus
+            ply:SetDSP(1, false)
+            ply:StopSound("")
+            ply.SCP023_AffectTinnitus = nil
+        end
+    end)
 end
