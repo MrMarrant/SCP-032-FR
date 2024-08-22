@@ -1,5 +1,5 @@
 -- SCP-032-FR, A representation of a paranormal object on a fictional series on the game Garry's Mod.
--- Copyright (C) 2023  MrMarrant aka BIBI.
+-- Copyright (C) 2024  MrMarrant aka BIBI.
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@ SCP_032_FR_CONFIG.ModelBlueWhale = "models/props_borealis/bluebarrel001.mdl"
 SCP_032_FR_CONFIG.ModelSCP032FR = "models/props_borealis/bluebarrel001.mdl"
 
 SCP_032_FR_CONFIG.ActionAmmo = {
+    ["V"] = function (gun) scp_032_fr.V(gun) end,
     ["XVII"] = function (gun) scp_032_fr.XVII(gun) end,
     ['LXII'] = function (gun) scp_032_fr.LXII(gun) end,
     ["nulla"] = function (gun) scp_032_fr.nulla(gun) end,
@@ -94,6 +95,31 @@ end
 -- [[ *  Gun Type Functions  *]]
 
 --[[
+* Shoot an earthquake from the player pos
+--]]
+function scp_032_fr.V(gun)
+    local posEQ = gun:GetOwner():GetPos()
+    local duration = math.random(20, 30)
+    local radius = 9999
+    local quakeFrequency = 0.1
+
+    util.ScreenShake( posEQ, 5, 20, duration, radius )
+    timer.Create("SCP032FR_EarthquakeTimer", quakeFrequency, 0, function()
+        for _, ent in pairs(ents.GetAll()) do
+            if ent:GetClass() == "prop_physics" and posEQ:Distance(ent:GetPos()) <= radius then
+                scp_032_fr.QuakeEffect(ent)
+            end
+        end
+    end)
+
+    timer.Simple(duration, function()
+        timer.Remove("SCP032FR_EarthquakeTimer")
+    end)
+    -- TODO : SFX
+    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+end
+
+--[[
 * Shoot 9mm pistol
 --]]
 function scp_032_fr.XVII(gun)
@@ -138,7 +164,8 @@ function scp_032_fr.X(gun)
 	local ent = scp_032_fr.CreateProp(ply)
     scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBowling)
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
-    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+    -- TODO : SFX
+    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
 end
 
 --[[
@@ -149,7 +176,8 @@ function scp_032_fr.XXIII(gun)
 	local ent = scp_032_fr.CreateProp(ply)
     scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBowling)
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
-    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+    -- TODO : SFX
+    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
 end
 
 --[[
@@ -160,7 +188,8 @@ function scp_032_fr.XXII(gun)
 	local ent = scp_032_fr.CreateProp(ply)
     scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBlueWhale)
 	scp_032_fr.ShootAnEnt(ply, ent, 300)
-    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+    -- TODO : SFX
+    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
 end
 
 --[[
@@ -171,7 +200,8 @@ function scp_032_fr.CCCXII(gun)
 	local ent = scp_032_fr.CreateProp(ply)
     scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelPlasticCup)
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
-    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+    -- TODO : SFX
+    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
 end
 
 --[[
@@ -179,7 +209,10 @@ end
 --]]
 function scp_032_fr.XC(gun)
     local ply = gun:GetOwner()
-    ply:EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+    -- TODO : SFX
+    ply:EmitSound("", 75, math.random(90, 110))
+    -- TODO : Trouve run moyen de produire l'effet accouphene 
+    -- comme quand on se prend une grenade par ex.
 end
 
 --[[
@@ -188,5 +221,24 @@ end
 function scp_032_fr.MMMM(gun)
     gun:ShootBullet( 1, 1, 0.01 )
     gun:GetOwner():ViewPunch( Angle( -1, 0, 0 ) )
-    --gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+    -- TODO : SFX
+    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+end
+
+--[[
+* Make a Earth Quake physic effect on a entity
+--]]
+function scp_032_fr.QuakeEffect(ent)
+    if not IsValid(ent) or not ent:GetPhysicsObject():IsValid() then return end
+
+    local phys = ent:GetPhysicsObject()
+    local quakeStrength = 50
+
+    local forceEQ = Vector(
+        math.random(-quakeStrength, quakeStrength),
+        math.random(-quakeStrength, quakeStrength),
+        math.random(-quakeStrength, quakeStrength) / 2
+    )
+
+    phys:ApplyForceCenter(forceEQ)
 end

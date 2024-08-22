@@ -1,5 +1,5 @@
 -- SCP-032-FR, A representation of a paranormal object on a fictional series on the game Garry's Mod.
--- Copyright (C) 2023  MrMarrant aka BIBI.
+-- Copyright (C) 2024  MrMarrant aka BIBI.
 
 -- This program is free software: you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -15,6 +15,10 @@
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 SCP_032_FR_CONFIG.AmmoType = {
+    V = {
+        TotalAmmo = 5,
+        CDShoot = 35
+    },
     XVII = {
         TotalAmmo = 17,
         CDShoot = 0.2
