@@ -33,6 +33,7 @@ SCP_032_FR_CONFIG.ActionAmmo = {
     ["XXII"] = function (gun) scp_032_fr.XXII(gun) end,
     ["XXIII"] = function (gun) scp_032_fr.XXIII(gun) end,
     ["CCCXII"] = function (gun) scp_032_fr.CCCXII(gun) end,
+    ["DCLXVI"] = function (gun) scp_032_fr.DCLXVI(gun) end,
 }
 
 function scp_032_fr.InitAmmoType(ply, gun)
@@ -227,6 +228,19 @@ end
 function scp_032_fr.MMMM(gun)
     gun:ShootBullet( 1, 1, 0.01 )
     gun:GetOwner():ViewPunch( Angle( -1, 0, 0 ) )
+    -- TODO : SFX
+    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+end
+
+--[[
+* Shoot fire
+--]]
+function scp_032_fr.DCLXVI(gun)
+    local ply = gun:GetOwner()
+	local ent = scp_032_fr.CreateProp(ply, ents.Create( "fire_scp032fr" ))
+	ent:Spawn()
+	ent:Activate()
+	scp_032_fr.ShootAnEnt(ply, ent, 1500)
     -- TODO : SFX
     gun:GetOwner():EmitSound("", 75, math.random(90, 110))
 end

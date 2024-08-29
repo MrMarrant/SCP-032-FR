@@ -14,8 +14,35 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+AddCSLuaFile("cl_init.lua")
+AddCSLuaFile("shared.lua")
 include("shared.lua")
 
-function ENT:Draw()
-    self:DrawModel() 
+function ENT:Initialize()
+    -- TODO : litlle ball Model
+	self:SetModel( "" )
+    self:SetColor(Color(255, 255, 255, 0))
+    self:SetRenderMode(RENDERMODE_TRANSCOLOR)
+    self:SetNoDraw(true)
+	self:RebuildPhysics()
+	self:Ignite(999)
+end
+
+-- Intialise the physic of the entity
+function ENT:RebuildPhysics( )
+	self:PhysicsInit( SOLID_VPHYSICS ) 
+	self:SetMoveType(MOVETYPE_VPHYSICS)
+	self:SetSolid( SOLID_VPHYSICS ) 
+	self:SetUseType(SIMPLE_USE)
+	self:PhysWake()
+end
+
+-- Use specially for the physics sounds
+function ENT:PhysicsCollide( data, physobj )
+    local EntHit = data.HitEntity
+	if (EntHit:IsPlayer()) then
+		EntHit:EmitSound("ambient/fire/ignite.wav", 75, 100, 1, CHAN_AUTO)
+		EntHit:ignite(1)
+    end
+	self:Remove()
 end

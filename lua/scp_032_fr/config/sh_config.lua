@@ -58,6 +58,10 @@ SCP_032_FR_CONFIG.AmmoType = {
     CCCXII = {
         TotalAmmo = 312,
         CDShoot = 2
+    },
+    DCLXVI = {
+        TotalAmmo = 666,
+        CDShoot = 0.5
     }
 }
 SCP_032_FR_CONFIG.KeyAmmoType = {}
