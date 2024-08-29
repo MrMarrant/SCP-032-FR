@@ -71,6 +71,7 @@ function SWEP:Deploy()
 	return true
 end
 
+-- TODO : Add a sound when the weapon is in CD.
 function SWEP:PrimaryAttack()
 	if CLIENT then return end
 	local CurrentTime = CurTime()

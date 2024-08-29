@@ -34,6 +34,7 @@ SCP_032_FR_CONFIG.ActionAmmo = {
     ["XXIII"] = function (gun) scp_032_fr.XXIII(gun) end,
     ["CCCXII"] = function (gun) scp_032_fr.CCCXII(gun) end,
     ["DCLXVI"] = function (gun) scp_032_fr.DCLXVI(gun) end,
+    ["III"] = function (gun) scp_032_fr.III(gun) end,
 }
 
 function scp_032_fr.InitAmmoType(ply, gun)
@@ -61,17 +62,22 @@ end
 
 
 function scp_032_fr.CreateProp(ply, ent)
-    local LookForward = ply:EyeAngles():Forward()
-	local LookUp = ply:EyeAngles():Up()
 	local ent = ent or scp_032_fr.CreateEnt("prop_physics")
 	local DistanceToPos = 50
-	local PosObject = (ply:IsPlayer() and ply:GetShootPos() or ply:GetPos()) + LookForward * DistanceToPos + LookUp
-    PosObject.z = ply:GetPos().z
 
-	ent:SetPos( PosObject )
+	ent:SetPos( scp_032_fr.GetPosForward(ply, DistanceToPos) )
 	ent:SetAngles( ply:EyeAngles() )
 
     return ent
+end
+
+function scp_032_fr.GetPosForward(ply, DistanceToPos)
+    local LookForward = ply:EyeAngles():Forward()
+	local LookUp = ply:EyeAngles():Up()
+    local PosObject = (ply:IsPlayer() and ply:GetShootPos() or ply:GetPos()) + LookForward * DistanceToPos + LookUp
+    PosObject.z = ply:GetPos().z
+    
+    return PosObject
 end
 
 function scp_032_fr.SetEntParam(ent, model)
@@ -93,7 +99,70 @@ function scp_032_fr.Shoot(AmmoType, gun)
     SCP_032_FR_CONFIG.ActionAmmo[AmmoType](gun)
 end
 
--- [[ *  Gun Type Functions  *]]
+--[[
+* Make a Earth Quake physic effect on a entity
+--]]
+function scp_032_fr.QuakeEffect(ent)
+    if not IsValid(ent) or not ent:GetPhysicsObject():IsValid() then return end
+
+    local phys = ent:GetPhysicsObject()
+    local quakeStrength = 50
+
+    local forceEQ = Vector(
+        math.random(-quakeStrength, quakeStrength),
+        math.random(-quakeStrength, quakeStrength),
+        math.random(-quakeStrength, quakeStrength) / 2
+    )
+
+    phys:ApplyForceCenter(forceEQ)
+end
+
+function scp_032_fr.ApplyTinnitusEffect(ply)
+    if not IsValid(ply) or not ply:IsPlayer() then return end
+
+    ply:SetDSP(35, false) -- Disable Sounds
+    -- TODO : SFX tinnitus
+    ply:EmitSound("", 75, math.random(90, 110))
+    ply.SCP023_AffectTinnitus = true
+
+    timer.Simple(10, function()
+        if not IsValid(ply) then return end
+        if ply.SCP023_AffectTinnitus
+            ply:SetDSP(1, false)
+            -- TODO : SFX tinnitus
+            ply:StopSound("")
+            ply.SCP023_AffectTinnitus = nil
+        end
+    end)
+end
+
+--? [[ *  Gun Type Functions  *]]
+
+--[[
+* Shoot an electrib orb that flash nearby player & 
+* burn those who are too close
+--]]
+-- TODO : A test
+function scp_032_fr.III(gun)
+    local ply = gun:GetOwner()
+    local pos = scp_032_fr.GetPosForward(ply, 50)
+
+    local ent = scp_032_fr.CreateProp(ply, ents.Create( "electricorb_scp032fr" ))
+	ent:Spawn()
+	ent:Activate()
+
+    -- Création de l'entité de particules pour l'effet
+    local effectData = EffectData()
+    effectData:SetOrigin(pos) -- Définit la position d'origine de l'effet
+    effectData:SetScale(1) -- Échelle de l'effet, ajustez pour un effet plus grand ou plus petit
+    effectData:SetMagnitude(2) -- Intensité de l'effet, ajustez pour plus ou moins de "force"
+    
+    util.Effect("TeslaZap", effectData)
+
+    net.Start(SCP_032_FR_CONFIG.ElectricOrb)
+        net.WriteVector(pos)
+    net.Broadcast(ply)
+end
 
 --[[
 * Shoot an earthquake from the player pos
@@ -243,41 +312,4 @@ function scp_032_fr.DCLXVI(gun)
 	scp_032_fr.ShootAnEnt(ply, ent, 1500)
     -- TODO : SFX
     gun:GetOwner():EmitSound("", 75, math.random(90, 110))
-end
-
---[[
-* Make a Earth Quake physic effect on a entity
---]]
-function scp_032_fr.QuakeEffect(ent)
-    if not IsValid(ent) or not ent:GetPhysicsObject():IsValid() then return end
-
-    local phys = ent:GetPhysicsObject()
-    local quakeStrength = 50
-
-    local forceEQ = Vector(
-        math.random(-quakeStrength, quakeStrength),
-        math.random(-quakeStrength, quakeStrength),
-        math.random(-quakeStrength, quakeStrength) / 2
-    )
-
-    phys:ApplyForceCenter(forceEQ)
-end
-
-function scp_032_fr.ApplyTinnitusEffect(ply)
-    if not IsValid(ply) or not ply:IsPlayer() then return end
-
-    ply:SetDSP(35, false) -- Disable Sounds
-    -- TODO : SFX tinnitus
-    ply:EmitSound("", 75, math.random(90, 110))
-    ply.SCP023_AffectTinnitus = true
-
-    timer.Simple(10, function()
-        if not IsValid(ply) then return end
-        if ply.SCP023_AffectTinnitus
-            ply:SetDSP(1, false)
-            -- TODO : SFX tinnitus
-            ply:StopSound("")
-            ply.SCP023_AffectTinnitus = nil
-        end
-    end)
 end

@@ -62,6 +62,10 @@ SCP_032_FR_CONFIG.AmmoType = {
     DCLXVI = {
         TotalAmmo = 666,
         CDShoot = 0.5
+    },
+    III = {
+        TotalAmmo = 3,
+        CDShoot = 30
     }
 }
 SCP_032_FR_CONFIG.KeyAmmoType = {}
@@ -71,3 +75,4 @@ end
 
 -- NET VAR
 SCP_032_FR_CONFIG.SendDataAmmo = "SCP_032_FR_CONFIG.SendDataAmmo"
+SCP_032_FR_CONFIG.ElectricOrb = "SCP_032_FR_CONFIG.ElectricOrb"
