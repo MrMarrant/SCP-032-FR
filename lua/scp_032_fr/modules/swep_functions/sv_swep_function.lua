@@ -59,10 +59,10 @@ function scp_032_fr.CreateEnt(name)
 end
 
 
-function scp_032_fr.CreateProp(ply)
+function scp_032_fr.CreateProp(ply, ent)
     local LookForward = ply:EyeAngles():Forward()
 	local LookUp = ply:EyeAngles():Up()
-	local ent = scp_032_fr.CreateEnt("prop_physics")
+	local ent = ent or scp_032_fr.CreateEnt("prop_physics")
 	local DistanceToPos = 50
 	local PosObject = (ply:IsPlayer() and ply:GetShootPos() or ply:GetPos()) + LookForward * DistanceToPos + LookUp
     PosObject.z = ply:GetPos().z
@@ -161,8 +161,9 @@ end
 --]]
 function scp_032_fr.X(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply)
-    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBowling)
+	local ent = scp_032_fr.CreateProp(ply, ents.Create( "bowling_scp032fr" ))
+	ent:Spawn()
+	ent:Activate()
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
     -- TODO : SFX
     gun:GetOwner():EmitSound("", 75, math.random(90, 110))
@@ -252,7 +253,7 @@ function scp_032_fr.ApplyTinnitusEffect(ply)
     if not IsValid(ply) or not ply:IsPlayer() then return end
 
     ply:SetDSP(35, false) -- Disable Sounds
-    -- TODO : SFX
+    -- TODO : SFX tinnitus
     ply:EmitSound("", 75, math.random(90, 110))
     ply.SCP023_AffectTinnitus = true
 
@@ -260,6 +261,7 @@ function scp_032_fr.ApplyTinnitusEffect(ply)
         if not IsValid(ply) then return end
         if ply.SCP023_AffectTinnitus
             ply:SetDSP(1, false)
+            -- TODO : SFX tinnitus
             ply:StopSound("")
             ply.SCP023_AffectTinnitus = nil
         end

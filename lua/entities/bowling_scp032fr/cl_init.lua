@@ -14,17 +14,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-hook.Add( "PlayerDeath", "PlayerDeath.SCP032FR_Died", function( victim, inflictor, attacker )
-    victim.SCP032FR_AmmoType = nil
-    victim.SCP032FR_AmmoLeft = nil
-    victim:SetDSP(1, false)
-    victim:StopSound("")
-    -- TODO : Set coté client aussi 
-    victim.SCP023_AffectTinnitus = nil
-    if (inflictor:GetClass() == 'bowling_scp032fr') then
-        -- TODO : NICE STRIKE de nintendo.
-        victim:EmitSound("")
-    end
-end)
+include("shared.lua")
 
-util.AddNetworkString(SCP_032_FR_CONFIG.SendDataAmmo)
+function ENT:Draw()
+    self:DrawModel() 
+end

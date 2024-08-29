@@ -20,4 +20,6 @@ net.Receive( SCP_032_FR_CONFIG.SendDataAmmo, function()
     local ammoType = net.ReadString()
 
     ply.SCP032FR_AmmoType = ammoType
+    -- TODO : SFX Appel Des nombres
+    ply:EmitSound("_"..ammoType, 75, math.random(90, 110))
 end)
