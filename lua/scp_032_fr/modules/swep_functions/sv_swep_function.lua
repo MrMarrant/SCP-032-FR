@@ -61,11 +61,10 @@ function scp_032_fr.CreateEnt(name)
 end
 
 
-function scp_032_fr.CreateProp(ply, ent)
+function scp_032_fr.CreateProp(ply, distance, ent)
 	local ent = ent or scp_032_fr.CreateEnt("prop_physics")
-	local DistanceToPos = 50
 
-	ent:SetPos( scp_032_fr.GetPosForward(ply, DistanceToPos) )
+	ent:SetPos( scp_032_fr.GetPosForward(ply, distance) )
 	ent:SetAngles( ply:EyeAngles() )
 
     return ent
@@ -117,15 +116,16 @@ function scp_032_fr.QuakeEffect(ent)
     phys:ApplyForceCenter(forceEQ)
 end
 
-function scp_032_fr.ApplyTinnitusEffect(ply)
+function scp_032_fr.ApplyTinnitusEffect(ply, duration)
     if not IsValid(ply) or not ply:IsPlayer() then return end
+    if ply.SCP023_AffectTinnitus then return end
 
     ply:SetDSP(35, false) -- Disable Sounds
     -- TODO : SFX tinnitus
-    ply:EmitSound("", 75, math.random(90, 110))
+    ply:StartLoopingSound("")
     ply.SCP023_AffectTinnitus = true
 
-    timer.Simple(10, function()
+    timer.Simple(duration, function()
         if not IsValid(ply) then return end
         if ply.SCP023_AffectTinnitus
             ply:SetDSP(1, false)
@@ -133,6 +133,13 @@ function scp_032_fr.ApplyTinnitusEffect(ply)
             ply:StopSound("")
             ply.SCP023_AffectTinnitus = nil
         end
+    end)
+end
+
+function scp_032_fr.RemoveByTimer(ent)
+    timer.Simple(SCP_032_FR_CONFIG.DurationProps:GetInt(), function()
+        if (not IsValid(ent)) then return end
+        ent:Remove()
     end)
 end
 
@@ -147,7 +154,7 @@ function scp_032_fr.III(gun)
     local ply = gun:GetOwner()
     local pos = scp_032_fr.GetPosForward(ply, 50)
 
-    local ent = scp_032_fr.CreateProp(ply, ents.Create( "electricorb_scp032fr" ))
+    local ent = scp_032_fr.CreateProp(ply, 50, ents.Create( "electricorb_scp032fr" ))
 	ent:Spawn()
 	ent:Activate()
 
@@ -167,6 +174,7 @@ end
 --[[
 * Shoot an earthquake from the player pos
 --]]
+-- TODO : A test
 function scp_032_fr.V(gun)
     local posEQ = gun:GetOwner():GetPos()
     local duration = math.random(20, 30)
@@ -220,9 +228,12 @@ end
 function scp_032_fr.MMII(gun)
     -- TODO : Spawn the model gun (not fast, it just have to travel 2-3m)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply)
+	local ent = scp_032_fr.CreateProp(ply, 50)
     scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelSCP032FR)
 	scp_032_fr.ShootAnEnt(ply, ent, 100)
+    -- TODO : SFX
+    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+    scp_032_fr.RemoveByTimer(ent)
 end
 
 --[[
@@ -231,12 +242,13 @@ end
 --]]
 function scp_032_fr.X(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply, ents.Create( "bowling_scp032fr" ))
+	local ent = scp_032_fr.CreateProp(ply, 50, ents.Create( "bowling_scp032fr" ))
 	ent:Spawn()
 	ent:Activate()
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
     -- TODO : SFX
-    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+    ply:EmitSound("", 75, math.random(90, 110))
+    scp_032_fr.RemoveByTimer(ent)
 end
 
 --[[
@@ -244,9 +256,10 @@ end
 --]]
 function scp_032_fr.XXIII(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply)
+	local ent = scp_032_fr.CreateProp(ply, 50)
     scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBowling)
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
+    scp_032_fr.RemoveByTimer(ent)
     -- TODO : SFX
     gun:GetOwner():EmitSound("", 75, math.random(90, 110))
 end
@@ -256,11 +269,8 @@ end
 --]]
 function scp_032_fr.XXII(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply)
-    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBlueWhale)
-	scp_032_fr.ShootAnEnt(ply, ent, 300)
-    -- TODO : SFX
-    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+	local ent = scp_032_fr.CreateProp(ply, 100, ents.Create( "bluewhale_scp032fr" ))
+	scp_032_fr.ShootAnEnt(ply, ent, 1000)
 end
 
 --[[
@@ -268,9 +278,10 @@ end
 --]]
 function scp_032_fr.CCCXII(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply)
+	local ent = scp_032_fr.CreateProp(ply, 50)
     scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelPlasticCup)
-	scp_032_fr.ShootAnEnt(ply, ent, 1000)
+	scp_032_fr.ShootAnEnt(ply, ent, 500)
+    scp_032_fr.RemoveByTimer(ent)
     -- TODO : SFX
     gun:GetOwner():EmitSound("", 75, math.random(90, 110))
 end
@@ -286,7 +297,7 @@ function scp_032_fr.XC(gun)
     ply:EmitSound("", 75, math.random(90, 110))
     for _, ent in pairs(player.GetAll()) do
         if ent:GetPos():Distance(ply:GetPos()) <= radiusEffect then
-            scp_032_fr.ApplyTinnitusEffect(ent)
+            scp_032_fr.ApplyTinnitusEffect(ent, 10)
         end
     end
 end
@@ -306,7 +317,7 @@ end
 --]]
 function scp_032_fr.DCLXVI(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply, ents.Create( "fire_scp032fr" ))
+	local ent = scp_032_fr.CreateProp(ply, 50, ents.Create( "fire_scp032fr" ))
 	ent:Spawn()
 	ent:Activate()
 	scp_032_fr.ShootAnEnt(ply, ent, 1500)

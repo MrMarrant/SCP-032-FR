@@ -19,14 +19,12 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
+    -- TODO : Blue Whale Model
 	self:SetModel( "" )
 	self:RebuildPhysics()
 	self:InitVar()
-	self:EmitSound( "ambient/levels/labs/electric_explosion1.wav" )
-	timer.Simple(10, function()
-		if (not IsValid(self)) then return end
-		self:Remove()
-	end)
+	self:SetMaxHealth( 500 )
+	self:StartLoopingSound( "" ) -- TODO : Son de balène loop
 end
 
 -- Intialise the physic of the entity
@@ -41,19 +39,28 @@ end
 -- Intialise every var related to the entity
 function ENT:InitVar( )
 	self:SetRadiusOrb( 1500 )
-	self:SetMinDamage( 4 )
-	self:SetMaxDamage( 8 )
+	self:SetIsDead( false )
+end
+
+function ENT:OnTakeDamage( damage )
+	if (damage >= self:Health()) then
+		self:EmitSound( "" ) -- TODO : Son de râle d'agonie
+		self:SetIsDead( true )
+		self:StopSound( "" ) -- TODO : Arrêt du son de balène loop
+		-- TODO : Animation de mort
+	else
+		self:EmitSound( "" ) -- TODO : Son de balène qui se fait taper
+	end
 end
 
 function ENT:Think()
+	if (self:GetIsDead()) then return end
+
 	local entsFound = ents.FindInSphere( self:GetPos(), self:GetRadiusOrb() )
 	for key, value in ipairs(entsFound) do
         if (value:IsPlayer() and value:Alive()) then
-			local distance = self:GetPos():Distance(value:GetPos())
-			local pente = (self:GetMinDamage() - self:GetMaxDamage())/self:GetRadiusOrb()
-			local damage = pente * distance + self:GetMaxDamage()
-			value:TakeDamage( damage, self, self )
-			value:Ignite( 1, 0 )
+			value:TakeDamage( 0.5, self, self )
+			scp_032_fr.ApplyTinnitusEffect(value, 20)
         end
     end
 end

@@ -25,11 +25,24 @@ SWEP.AutoSwitchTo = false
 
 
 -- TODO : Afficher Le type de mun de l'arme actuelle
+-- TODO : A test l'effet de wiggle
+local shakeAmount = 2
+local shakeSpeed = 50
 
 function SWEP:DrawHUD()
     local ply = self:GetOwner()
+    local xPosition = SCP_032_FR_CONFIG.ScrW * 0.372
+    local yPosition = SCP_032_FR_CONFIG.ScrH * 0.55
+    local isShaking = scp_032_fr.IsPlayerMoving(LocalPlayer())
+
+    if (isShaking) then
+        local shakeOffsetX = math.sin(CurTime() * shakeSpeed) * shakeAmount
+        local shakeOffsetY = math.cos(CurTime() * shakeSpeed) * shakeAmount
+        xPosition = xPosition + shakeOffsetX
+        yPosition = yPosition + shakeOffsetY
+    end
 
     surface.SetDrawColor( 0, 0, 0, 0)
     surface.DrawRect(0, 0, SCP_032_FR_CONFIG.ScrW, SCP_032_FR_CONFIG.ScrH)
-    draw.DrawText( ply.SCP032FR_AmmoType, "SCP032FR_RomanNumeral", SCP_032_FR_CONFIG.ScrW *0.372, SCP_032_FR_CONFIG.ScrH * 0.55, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER )
+    draw.DrawText( ply.SCP032FR_AmmoType, "SCP032FR_RomanNumeral", xPosition, yPosition, Color(0, 0, 0, 255), TEXT_ALIGN_CENTER )
 end

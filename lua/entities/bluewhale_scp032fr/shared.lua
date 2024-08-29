@@ -14,33 +14,17 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-function scp_032_fr.IsPlayerMoving(ply)
-    if not IsValid(ply) then return false end
 
-    local velocity = ply:GetVelocity()
-    return velocity:Length() > 5
+
+ENT.Type = "anim"
+ENT.Base = "base_gmodentity"
+ENT.Author = "MrMarrant"
+ENT.PrintName = "Blue Whale SCP-032-FR"
+ENT.Spawnable = false
+ENT.Category = "Other"
+
+-- Set up every var related to the entity we will use
+function ENT:SetupDataTables()
+    self:NetworkVar("Int", 0, "RadiusOrb")
+    self:NetworkVar("Bool", 0, "IsDead")
 end
-
-
-net.Receive(SCP_032_FR_CONFIG.SendDataAmmo, function()
-    local ply = LocalPlayer()
-    local ammoType = net.ReadString()
-
-    ply.SCP032FR_AmmoType = ammoType
-    -- TODO : SFX Appel Des nombres
-    ply:EmitSound("_"..ammoType, 75, math.random(90, 110))
-end)
-
-net.Receive(SCP_032_FR_CONFIG.ElectricOrb, function()
-    local pos = net.ReadVector()
-
-    local light = DynamicLight(0)
-    light.pos = pos
-    light.r = 0
-    light.g = 200
-    light.b = 255
-    light.brightness = 6
-    light.Decay = 1000
-    light.Size = 256
-    light.DieTime = CurTime() + 10
-end)

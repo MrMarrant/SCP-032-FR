@@ -16,6 +16,8 @@
 
 local LANG_EN = {
     test = "test",
+    warningsettings = "Only Super Admins can change these values, all other roles will do nothing.",
+    durationprops_description = "Time before a props disappears.",
 }
 
 scp_032_fr.AddLanguage("en", LANG_EN)

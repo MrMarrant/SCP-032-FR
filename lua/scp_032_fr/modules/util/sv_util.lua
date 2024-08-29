@@ -14,33 +14,30 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-function scp_032_fr.IsPlayerMoving(ply)
-    if not IsValid(ply) then return false end
-
-    local velocity = ply:GetVelocity()
-    return velocity:Length() > 5
+/* 
+* 
+* @string name
+* @number value
+*/
+function scp_032_fr.SetConvarClientSide(name, value, ply)
+    if (type( value ) == "boolean") then value = value and 1 or 0 end
+    net.Start(SCP_032_FR_CONFIG.SetConvarClientSide)
+        net.WriteString(name)
+        net.WriteUInt(value, 14)
+    if (ply) then
+        net.Send(ply)
+    else
+        net.Broadcast()
+    end
 end
 
+-- Set Convar Int for the client side
+net.Receive(SCP_032_FR_CONFIG.SetConvarInt, function ( len, ply )
+    if (ply:IsSuperAdmin() or game.SinglePlayer()) then
+        local name = net.ReadString()
+        local value = net.ReadUInt(14)
+        SCP_032_FR_CONFIG[name]:SetInt(value)
 
-net.Receive(SCP_032_FR_CONFIG.SendDataAmmo, function()
-    local ply = LocalPlayer()
-    local ammoType = net.ReadString()
-
-    ply.SCP032FR_AmmoType = ammoType
-    -- TODO : SFX Appel Des nombres
-    ply:EmitSound("_"..ammoType, 75, math.random(90, 110))
-end)
-
-net.Receive(SCP_032_FR_CONFIG.ElectricOrb, function()
-    local pos = net.ReadVector()
-
-    local light = DynamicLight(0)
-    light.pos = pos
-    light.r = 0
-    light.g = 200
-    light.b = 255
-    light.brightness = 6
-    light.Decay = 1000
-    light.Size = 256
-    light.DieTime = CurTime() + 10
+        scp_032_fr.SetConvarClientSide('Client'..name, value) --? The value clientside start with Client
+    end
 end)

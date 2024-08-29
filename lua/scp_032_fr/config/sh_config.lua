@@ -76,3 +76,5 @@ end
 -- NET VAR
 SCP_032_FR_CONFIG.SendDataAmmo = "SCP_032_FR_CONFIG.SendDataAmmo"
 SCP_032_FR_CONFIG.ElectricOrb = "SCP_032_FR_CONFIG.ElectricOrb"
+SCP_032_FR_CONFIG.SetConvarClientSide = "SCP_032_FR_CONFIG.SetConvarClientSide"
+SCP_032_FR_CONFIG.SetConvarInt = "SCP_032_FR_CONFIG.SetConvarInt"

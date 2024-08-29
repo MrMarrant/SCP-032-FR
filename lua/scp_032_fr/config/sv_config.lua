@@ -14,6 +14,8 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+SCP_032_FR_CONFIG.DurationProps = CreateConVar( "SCP032FR_DurationProps", 60, {FCVAR_PROTECTED, FCVAR_ARCHIVE}, "Time before a props disappears.", 5, 9999 )
+
 hook.Add( "PlayerDeath", "PlayerDeath.SCP032FR_Died", function( victim, inflictor, attacker )
     victim.SCP032FR_AmmoType = nil
     victim.SCP032FR_AmmoLeft = nil
@@ -29,3 +31,10 @@ end)
 
 util.AddNetworkString(SCP_032_FR_CONFIG.SendDataAmmo)
 util.AddNetworkString(SCP_032_FR_CONFIG.ElectricOrb)
+util.AddNetworkString(SCP_032_FR_CONFIG.SetConvarClientSide)
+util.AddNetworkString(SCP_032_FR_CONFIG.SetConvarInt)
+
+-- Send to player the list of actual players who wear the mask client side.
+hook.Add( "PlayerInitialSpawn", "PlayerInitialSpawn.SCP032FR_LoadConVar", function(ply)
+    scp_032_fr.SetConvarClientSide("ClientDurationProps", SCP_032_FR_CONFIG.DurationProps:GetInt(), ply)
+end)
