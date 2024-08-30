@@ -14,13 +14,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
     -- TODO : Bowling Model
-	self:SetModel( "" )
+	self:SetModel( SCP_032_FR_CONFIG.ModelBowling )
 	self:RebuildPhysics()
 end
 
@@ -38,8 +37,7 @@ end
 function ENT:PhysicsCollide( data, physobj )
     local EntHit = data.HitEntity
 	if (EntHit:IsPlayer()) then
-			EntHit:TakeDamage( data.Speed/0.7, self, self )
-		end
+		EntHit:TakeDamage( data.Speed/0.7, self, self )
     end
 	if data.DeltaTime > 0.2 then
 		if data.Speed > 250 then

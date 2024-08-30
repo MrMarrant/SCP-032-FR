@@ -78,3 +78,13 @@ SCP_032_FR_CONFIG.SendDataAmmo = "SCP_032_FR_CONFIG.SendDataAmmo"
 SCP_032_FR_CONFIG.ElectricOrb = "SCP_032_FR_CONFIG.ElectricOrb"
 SCP_032_FR_CONFIG.SetConvarClientSide = "SCP_032_FR_CONFIG.SetConvarClientSide"
 SCP_032_FR_CONFIG.SetConvarInt = "SCP_032_FR_CONFIG.SetConvarInt"
+
+-- Model Path
+SCP_032_FR_CONFIG.ModelBowling = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelTrain = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelQuartz = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelPlasticCup = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelBlueWhale = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelSCP032FR = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ElectricOrb = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.FireShoot = "models/props_borealis/bluebarrel001.mdl"

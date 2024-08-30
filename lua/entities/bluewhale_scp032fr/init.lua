@@ -14,13 +14,12 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
     -- TODO : Blue Whale Model
-	self:SetModel( "" )
+	self:SetModel( SCP_032_FR_CONFIG.ModelBlueWhale )
 	self:RebuildPhysics()
 	self:InitVar()
 	self:SetMaxHealth( 500 )

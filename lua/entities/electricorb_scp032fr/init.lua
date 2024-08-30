@@ -14,12 +14,11 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-AddCSLuaFile("cl_init.lua")
 AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-	self:SetModel( "" )
+	self:SetModel( SCP_032_FR_CONFIG.ElectricOrb )
 	self:RebuildPhysics()
 	self:InitVar()
 	self:EmitSound( "ambient/levels/labs/electric_explosion1.wav" )

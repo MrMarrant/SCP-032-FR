@@ -14,13 +14,6 @@
 -- You should have received a copy of the GNU General Public License
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-SCP_032_FR_CONFIG.ModelBowling = "models/props_borealis/bluebarrel001.mdl"
-SCP_032_FR_CONFIG.ModelTrain = "models/props_borealis/bluebarrel001.mdl"
-SCP_032_FR_CONFIG.ModelQuartz = "models/props_borealis/bluebarrel001.mdl"
-SCP_032_FR_CONFIG.ModelPlasticCup = "models/props_borealis/bluebarrel001.mdl"
-SCP_032_FR_CONFIG.ModelBlueWhale = "models/props_borealis/bluebarrel001.mdl"
-SCP_032_FR_CONFIG.ModelSCP032FR = "models/props_borealis/bluebarrel001.mdl"
-
 SCP_032_FR_CONFIG.ActionAmmo = {
     ["V"] = function (gun) scp_032_fr.V(gun) end,
     ["XVII"] = function (gun) scp_032_fr.XVII(gun) end,
@@ -37,11 +30,32 @@ SCP_032_FR_CONFIG.ActionAmmo = {
     ["III"] = function (gun) scp_032_fr.III(gun) end,
 }
 
-function scp_032_fr.InitAmmoType(ply, gun)
-    local AmmoSelected = SCP_032_FR_CONFIG.KeyAmmoType[ math.random( #SCP_032_FR_CONFIG.KeyAmmoType ) ]-- TODO : Verifier qu'il renvoie bien l'index!
-    ply.SCP032FR_AmmoType = AmmoSelected
+-- Cheat command
+hook.Add("PlayerSay", "PlayerSay.CheatCommandSCP032FR", function(ply, text)
+    local command = string.Explode(" ", text)
+    if command[1] == "!setammo" then
+        PrintTable(SCP_032_FR_CONFIG.KeyAmmoType)
+        local ammoType = tonumber(command[2])
+        local gun = ply:GetActiveWeapon()
+        scp_032_fr.SetAmmoType(ply, gun, ammoType)
+    end
+end)
 
+--[[
+* Set the ammo type for the player
+* @param ply : Player
+* @param gun : Entity
+* @param ammoPicked : int
+--]]
+function scp_032_fr.SetAmmoType(ply, gun, ammoPicked)
+    if (not ammoPicked) then return end
+
+    -- Get actual gun
+    local gun = ply:GetActiveWeapon()
+    local AmmoSelected = SCP_032_FR_CONFIG.KeyAmmoType[ ammoPicked ]
     local AmmoLeft = SCP_032_FR_CONFIG.AmmoType[AmmoSelected].TotalAmmo
+
+    ply.SCP032FR_AmmoType = AmmoSelected
     ply.SCP032FR_AmmoLeft = AmmoLeft
 
     gun.PrimaryCooldown = SCP_032_FR_CONFIG.AmmoType[AmmoSelected].CDShoot
@@ -49,27 +63,42 @@ function scp_032_fr.InitAmmoType(ply, gun)
     net.Start(SCP_032_FR_CONFIG.SendDataAmmo)
         net.WriteString(AmmoSelected)
     net.Send(ply)
+
 end
 
-function scp_032_fr.CreateEnt(name)
-	local ent = ents.Create( name )
-	if (not IsValid(ent)) then return false end
-	ent:Spawn()
-	ent:Activate()
-
-	return ent
+--[[
+* Init the ammo type for the player
+* @param ply : Player
+* @param gun : Entity
+--]]
+function scp_032_fr.InitAmmoType(ply, gun)
+    local ammoPicked = math.random( #SCP_032_FR_CONFIG.KeyAmmoType )
+    scp_032_fr.SetAmmoType(ply, gun, ammoPicked)
 end
 
-
-function scp_032_fr.CreateProp(ply, distance, ent)
-	local ent = ent or scp_032_fr.CreateEnt("prop_physics")
-
-	ent:SetPos( scp_032_fr.GetPosForward(ply, distance) )
+--[[
+* Create an entity and set params.
+* @param ply : Player
+* @param distance : int
+* @param model : string
+* @param obj : Entity?
+--]]
+function scp_032_fr.CreateEnt(ply, distance, model, obj)
+	local ent = obj or ents.Create("prop_physics")
+    if not IsValid(obj) then ent:SetModel( model ) end
+	ent:SetPos( ply:GetShootPos() + ply:GetAimVector() * distance )
 	ent:SetAngles( ply:EyeAngles() )
+    ent:Spawn()
+	ent:Activate()
 
     return ent
 end
 
+--[[
+* Get the position in front of the player
+* @param ply : Player
+* @param DistanceToPos : int
+--]]
 function scp_032_fr.GetPosForward(ply, DistanceToPos)
     local LookForward = ply:EyeAngles():Forward()
 	local LookUp = ply:EyeAngles():Up()
@@ -79,20 +108,20 @@ function scp_032_fr.GetPosForward(ply, DistanceToPos)
     return PosObject
 end
 
-function scp_032_fr.SetEntParam(ent, model)
-    ent:SetModel(model)
-    local phys = ent:GetPhysicsObject()
-	phys:EnableMotion( true )
-	phys:Wake()
-end
-
-
+--[[
+* Shoot an entity.
+* @param ply : Player
+* @param ent : Entity
+* @param speed : int
+--]]
 function scp_032_fr.ShootAnEnt(ply, ent, speed)
     ent:GetPhysicsObject():SetVelocity( ply:EyeAngles():Forward() * speed )
 end
 
 --[[
 * Shoot with the gun depend on the ammo type
+* @param AmmoType : string
+* @param gun : Entity
 --]]
 function scp_032_fr.Shoot(AmmoType, gun)
     SCP_032_FR_CONFIG.ActionAmmo[AmmoType](gun)
@@ -100,6 +129,7 @@ end
 
 --[[
 * Make a Earth Quake physic effect on a entity
+* @param ent : Entity
 --]]
 function scp_032_fr.QuakeEffect(ent)
     if not IsValid(ent) or not ent:GetPhysicsObject():IsValid() then return end
@@ -116,6 +146,11 @@ function scp_032_fr.QuakeEffect(ent)
     phys:ApplyForceCenter(forceEQ)
 end
 
+--[[
+* Make a tinnitus effect on a player.
+* @param ply : Player
+* @param duration : int
+--]]
 function scp_032_fr.ApplyTinnitusEffect(ply, duration)
     if not IsValid(ply) or not ply:IsPlayer() then return end
     if ply.SCP023_AffectTinnitus then return end
@@ -127,7 +162,7 @@ function scp_032_fr.ApplyTinnitusEffect(ply, duration)
 
     timer.Simple(duration, function()
         if not IsValid(ply) then return end
-        if ply.SCP023_AffectTinnitus
+        if ply.SCP023_AffectTinnitus then
             ply:SetDSP(1, false)
             -- TODO : SFX tinnitus
             ply:StopSound("")
@@ -136,6 +171,10 @@ function scp_032_fr.ApplyTinnitusEffect(ply, duration)
     end)
 end
 
+--[[
+* Remove an ent by a timer.
+* @param ent : Entity
+--]]
 function scp_032_fr.RemoveByTimer(ent)
     timer.Simple(SCP_032_FR_CONFIG.DurationProps:GetInt(), function()
         if (not IsValid(ent)) then return end
@@ -154,15 +193,13 @@ function scp_032_fr.III(gun)
     local ply = gun:GetOwner()
     local pos = scp_032_fr.GetPosForward(ply, 50)
 
-    local ent = scp_032_fr.CreateProp(ply, 50, ents.Create( "electricorb_scp032fr" ))
-	ent:Spawn()
-	ent:Activate()
+    local ent = scp_032_fr.CreateEnt(ply, 50, "", ents.Create( "electricorb_scp032fr" ))
 
     -- Création de l'entité de particules pour l'effet
     local effectData = EffectData()
-    effectData:SetOrigin(pos) -- Définit la position d'origine de l'effet
-    effectData:SetScale(1) -- Échelle de l'effet, ajustez pour un effet plus grand ou plus petit
-    effectData:SetMagnitude(2) -- Intensité de l'effet, ajustez pour plus ou moins de "force"
+    effectData:SetOrigin(pos)
+    effectData:SetScale(1)
+    effectData:SetMagnitude(2)
     
     util.Effect("TeslaZap", effectData)
 
@@ -173,6 +210,7 @@ end
 
 --[[
 * Shoot an earthquake from the player pos
+* @param gun : Entity
 --]]
 -- TODO : A test
 function scp_032_fr.V(gun)
@@ -199,6 +237,7 @@ end
 
 --[[
 * Shoot 9mm pistol
+* @param gun : Entity
 --]]
 function scp_032_fr.XVII(gun)
     gun:ShootBullet( 20, 1, 0.01 )
@@ -208,6 +247,7 @@ end
 
 --[[
 * Set the player in the sky
+* @param gun : Entity
 --]]
 function scp_032_fr.LXII(gun)
     local ply = gun:GetOwner()
@@ -218,19 +258,20 @@ end
 
 --[[
 * Nothing bhahahahaha
+* @param gun : Entity
 --]]
 function scp_032_fr.nulla(gun)
 end
 
 --[[
 * Shoot this gun
+* @param gun : Entity
 --]]
 function scp_032_fr.MMII(gun)
     -- TODO : Spawn the model gun (not fast, it just have to travel 2-3m)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply, 50)
-    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelSCP032FR)
-	scp_032_fr.ShootAnEnt(ply, ent, 100)
+	local ent = scp_032_fr.CreateEnt(ply, 50, SCP_032_FR_CONFIG.ModelSCP032FR)
+    scp_032_fr.ShootAnEnt(ply, ent, 300)
     -- TODO : SFX
     gun:GetOwner():EmitSound("", 75, math.random(90, 110))
     scp_032_fr.RemoveByTimer(ent)
@@ -239,12 +280,11 @@ end
 --[[
 * Shoot ball of bowling
 * Nice Strike
+* @param gun : Entity
 --]]
 function scp_032_fr.X(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply, 50, ents.Create( "bowling_scp032fr" ))
-	ent:Spawn()
-	ent:Activate()
+	local ent = scp_032_fr.CreateEnt(ply, 50, "", ents.Create( "bowling_scp032fr" ))
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
     -- TODO : SFX
     ply:EmitSound("", 75, math.random(90, 110))
@@ -253,11 +293,11 @@ end
 
 --[[
 * Shoot a train
+* @param gun : Entity
 --]]
 function scp_032_fr.XXIII(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply, 50)
-    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelBowling)
+	local ent = scp_032_fr.CreateEnt(ply, 50, SCP_032_FR_CONFIG.ModelTrain)
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
     scp_032_fr.RemoveByTimer(ent)
     -- TODO : SFX
@@ -266,20 +306,21 @@ end
 
 --[[
 * Shoot a blue whale
+* @param gun : Entity
 --]]
 function scp_032_fr.XXII(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply, 100, ents.Create( "bluewhale_scp032fr" ))
+	local ent = scp_032_fr.CreateEnt(ply, 100, "", ents.Create( "bluewhale_scp032fr" ))
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
 end
 
 --[[
 * Shoot a cup of plastic
+* @param gun : Entity
 --]]
 function scp_032_fr.CCCXII(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply, 50)
-    scp_032_fr.SetEntParam(ent, SCP_032_FR_CONFIG.ModelPlasticCup)
+	local ent = scp_032_fr.CreateEnt(ply, 50, SCP_032_FR_CONFIG.ModelPlasticCup)
 	scp_032_fr.ShootAnEnt(ply, ent, 500)
     scp_032_fr.RemoveByTimer(ent)
     -- TODO : SFX
@@ -288,6 +329,7 @@ end
 
 --[[
 * Set a enourmous sound & accouphene
+* @param gun : Entity
 --]]
 --TODO : A test
 function scp_032_fr.XC(gun)
@@ -304,6 +346,7 @@ end
 
 --[[
 * Shoot hair
+* @param gun : Entity
 --]]
 function scp_032_fr.MMMM(gun)
     gun:ShootBullet( 1, 1, 0.01 )
@@ -314,12 +357,11 @@ end
 
 --[[
 * Shoot fire
+* @param gun : Entity
 --]]
 function scp_032_fr.DCLXVI(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateProp(ply, 50, ents.Create( "fire_scp032fr" ))
-	ent:Spawn()
-	ent:Activate()
+	local ent = scp_032_fr.CreateEnt(ply, 50, "", ents.Create( "fire_scp032fr" ))
 	scp_032_fr.ShootAnEnt(ply, ent, 1500)
     -- TODO : SFX
     gun:GetOwner():EmitSound("", 75, math.random(90, 110))
