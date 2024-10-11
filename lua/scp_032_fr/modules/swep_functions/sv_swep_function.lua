@@ -193,18 +193,28 @@ function scp_032_fr.III(gun)
     local ply = gun:GetOwner()
     local pos = scp_032_fr.GetPosForward(ply, 50)
 
-    local ent = scp_032_fr.CreateEnt(ply, 50, "", ents.Create( "electricorb_scp032fr" ))
+    local ent = scp_032_fr.CreateEnt(ply, 100, "", ents.Create( "electricorb_scp032fr" ))
 
-    -- Création de l'entité de particules pour l'effet
-    local effectData = EffectData()
-    effectData:SetOrigin(pos)
-    effectData:SetScale(1)
-    effectData:SetMagnitude(2)
+    -- Visiblement bugué quand j'essazye d'en créer deux en même temps
+    local effectTesla = EffectData()
+    --local effectSpark = EffectData()
+    effectTesla:SetOrigin(pos)
+    effectTesla:SetScale(1000)
+    effectTesla:SetMagnitude(500)
+    effectTesla:SetEntity( ent )
+
+    -- effectSpark:SetOrigin(pos)
+    -- effectSpark:SetScale(1000)
+    -- effectSpark:SetMagnitude(500)
     
-    util.Effect("TeslaZap", effectData)
+    util.Effect("TeslaHitboxes", effectTesla)
+    -- timer.Create("SCP032FR_ElectricOrbTimer", 0.1, 0, function()
+    --     util.Effect("ElectricSpark", effectSpark)
+    -- end)
 
     net.Start(SCP_032_FR_CONFIG.ElectricOrb)
         net.WriteVector(pos)
+        net.WriteEntity(gun)
     net.Broadcast(ply)
 end
 

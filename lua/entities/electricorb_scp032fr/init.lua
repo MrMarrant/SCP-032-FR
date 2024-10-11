@@ -19,6 +19,9 @@ include("shared.lua")
 
 function ENT:Initialize()
 	self:SetModel( SCP_032_FR_CONFIG.ElectricOrb )
+	self:SetColor(Color(255, 255, 255, 0))
+    self:SetRenderMode(RENDERMODE_TRANSCOLOR)
+    self:SetNoDraw(true)
 	self:RebuildPhysics()
 	self:InitVar()
 	self:EmitSound( "ambient/levels/labs/electric_explosion1.wav" )
@@ -31,7 +34,7 @@ end
 -- Intialise the physic of the entity
 function ENT:RebuildPhysics( )
 	self:PhysicsInit( SOLID_VPHYSICS ) 
-	self:SetMoveType(MOVETYPE_VPHYSICS)
+	self:SetMoveType(MOVETYPE_NONE)
 	self:SetSolid( SOLID_VPHYSICS ) 
 	self:SetUseType(SIMPLE_USE)
 	self:PhysWake()
@@ -39,7 +42,7 @@ end
 
 -- Intialise every var related to the entity
 function ENT:InitVar( )
-	self:SetRadiusOrb( 1500 )
+	self:SetRadiusOrb( 1000 )
 	self:SetMinDamage( 4 )
 	self:SetMaxDamage( 8 )
 end

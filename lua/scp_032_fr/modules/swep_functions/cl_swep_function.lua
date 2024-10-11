@@ -33,14 +33,21 @@ end)
 
 net.Receive(SCP_032_FR_CONFIG.ElectricOrb, function()
     local pos = net.ReadVector()
-
-    local light = DynamicLight(0)
-    light.pos = pos
-    light.r = 0
-    light.g = 200
-    light.b = 255
-    light.brightness = 6
-    light.Decay = 1000
-    light.Size = 256
-    light.DieTime = CurTime() + 10
+    local gunIndex = net.ReadEntity():EntIndex()
+    hook.Add( "Think", "Think.SCP032FR_ElectricOrb_" .. gunIndex, function()
+        local light = DynamicLight(gunIndex)
+        if ( light ) then
+            light.pos = pos
+            light.r = 255
+            light.g = 255
+            light.b = 255
+            light.brightness = 100
+            light.decay = 1000
+            light.size = 1000
+            light.dietime = CurTime() + 10
+        end
+    end )
+    timer.Simple(10, function()
+        hook.Remove( "Think", "Think.SCP032FR_ElectricOrb_" .. gunIndex )
+    end)
 end)
