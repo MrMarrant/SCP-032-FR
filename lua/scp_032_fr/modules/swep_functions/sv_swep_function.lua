@@ -33,7 +33,7 @@ SCP_032_FR_CONFIG.ActionAmmo = {
 -- Cheat command
 hook.Add("PlayerSay", "PlayerSay.CheatCommandSCP032FR", function(ply, text)
     local command = string.Explode(" ", text)
-    if command[1] == "!setammo" then
+    if command[1] == "!setammo" and ply:IsAdmin() then
         PrintTable(SCP_032_FR_CONFIG.KeyAmmoType)
         local ammoType = tonumber(command[2])
         local gun = ply:GetActiveWeapon()
@@ -262,7 +262,7 @@ end
 function scp_032_fr.LXII(gun)
     local ply = gun:GetOwner()
     local CurrentPos = ply:GetPos()
-    CurrentPos.z = 9999 -- TODO : Vérifier ça
+    CurrentPos.z = 9999
     ply:SetPos(CurrentPos)
 end
 

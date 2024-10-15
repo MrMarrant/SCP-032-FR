@@ -26,6 +26,7 @@ SWEP.AutoSwitchTo = false
 
 -- TODO : Afficher Le type de mun de l'arme actuelle
 -- TODO : A test l'effet de wiggle
+--! Actuellement ça fonctionne pas trop en l'état, à revoir ou à réfléchir à un affichage plus simple.
 local shakeAmount = 2
 local shakeSpeed = 50
 

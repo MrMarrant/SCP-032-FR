@@ -47,6 +47,7 @@ SWEP.Automatic = false
 -- Variables Personnal to this weapon --
 -- [[ STATS WEAPON ]]
 SWEP.PrimaryCooldown = 2
+SWEP.CurrentPrimaryCooldown = CurTime()
 
 function SWEP:Initialize()
 	self:SetHoldType( self.HoldType )
@@ -71,21 +72,24 @@ function SWEP:Deploy()
 	return true
 end
 
--- TODO : Add a sound when the weapon is in CD.
 function SWEP:PrimaryAttack()
 	if CLIENT then return end
 	local CurrentTime = CurTime()
-	self:SetNextPrimaryFire( CurrentTime + self.PrimaryCooldown )
-
-    local ply = self:GetOwner()
-    if (ply.SCP032FR_AmmoLeft <= 0) then return end
-
-    ply.SCP032FR_AmmoLeft = ply.SCP032FR_AmmoLeft - 1
-
-	local VMAnim = ply:GetViewModel()
-
-    VMAnim:SendViewModelMatchingSequence( VMAnim:LookupSequence( "shoot" ) )
-    scp_032_fr.Shoot(ply.SCP032FR_AmmoType, self)
+	if (self.CurrentPrimaryCooldown < CurrentTime) then
+		local ply = self:GetOwner()
+		if (ply.SCP032FR_AmmoLeft <= 0) then return end
+	
+		ply.SCP032FR_AmmoLeft = ply.SCP032FR_AmmoLeft - 1
+	
+		local VMAnim = ply:GetViewModel()
+	
+		VMAnim:SendViewModelMatchingSequence( VMAnim:LookupSequence( "shoot" ) )
+		scp_032_fr.Shoot(ply.SCP032FR_AmmoType, self)
+		self.CurrentPrimaryCooldown = CurrentTime + self.PrimaryCooldown
+	else
+		-- TODO : Add a sound when the weapon is in CD.
+		self:EmitSound("")
+	end
 end
 
 function SWEP:SecondaryAttack()
@@ -98,7 +102,6 @@ end
 
 function SWEP:SetAmmoType()
     local ply = self:GetOwner()
-    -- TODO : Set le type de mun et son nombre de mun
     if (not IsValid(ply.SCP032FR_AmmoType)) then
         scp_032_fr.InitAmmoType(ply, self)
     end
