@@ -34,7 +34,6 @@ util.AddNetworkString(SCP_032_FR_CONFIG.ElectricOrb)
 util.AddNetworkString(SCP_032_FR_CONFIG.SetConvarClientSide)
 util.AddNetworkString(SCP_032_FR_CONFIG.SetConvarInt)
 
--- Send to player the list of actual players who wear the mask client side.
 hook.Add( "PlayerInitialSpawn", "PlayerInitialSpawn.SCP032FR_LoadConVar", function(ply)
     scp_032_fr.SetConvarClientSide("ClientDurationProps", SCP_032_FR_CONFIG.DurationProps:GetInt(), ply)
 end)

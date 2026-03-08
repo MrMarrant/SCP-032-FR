@@ -30,17 +30,6 @@ SCP_032_FR_CONFIG.ActionAmmo = {
     ["III"] = function (gun) scp_032_fr.III(gun) end,
 }
 
--- Cheat command
-hook.Add("PlayerSay", "PlayerSay.CheatCommandSCP032FR", function(ply, text)
-    local command = string.Explode(" ", text)
-    if command[1] == "!setammo" and ply:IsAdmin() then
-        PrintTable(SCP_032_FR_CONFIG.KeyAmmoType)
-        local ammoType = tonumber(command[2])
-        local gun = ply:GetActiveWeapon()
-        scp_032_fr.SetAmmoType(ply, gun, ammoType)
-    end
-end)
-
 --[[
 * Set the ammo type for the player
 * @param ply : Player
@@ -101,10 +90,10 @@ end
 --]]
 function scp_032_fr.GetPosForward(ply, DistanceToPos)
     local LookForward = ply:EyeAngles():Forward()
-	local LookUp = ply:EyeAngles():Up()
+    local LookUp = ply:EyeAngles():Up()
     local PosObject = (ply:IsPlayer() and ply:GetShootPos() or ply:GetPos()) + LookForward * DistanceToPos + LookUp
     PosObject.z = ply:GetPos().z
-    
+
     return PosObject
 end
 
@@ -252,7 +241,7 @@ end
 function scp_032_fr.XVII(gun)
     gun:ShootBullet( 20, 1, 0.01 )
     gun:GetOwner():ViewPunch( Angle( -1, 0, 0 ) )
-    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire".. math.random(2,3) ..".wav", 75, math.random(90, 110))
+    gun:GetOwner():EmitSound("weapons/pistol/pistol_fire" .. math.random(2, 3) .. ".wav", 75, math.random(90, 110))
 end
 
 --[[

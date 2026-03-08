@@ -24,8 +24,8 @@ SWEP.SlotPos = 1
 SWEP.Spawnable = true
 
 SWEP.Category = "SCP"
-SWEP.ViewModel = "" --Model( "models/weapons/v_scp032fr/v_scp032fr.mdl" )
-SWEP.WorldModel = "" --Model( "models/weapons/w_scp032fr/w_scp032fr.mdl" )
+SWEP.ViewModel = Model( "models/weapons/scp_032fr/v_scp_032fr.mdl" )
+SWEP.WorldModel = SCP_032_FR_CONFIG.ModelSCP032FR
 
 SWEP.ViewModelFOV = 65
 SWEP.HoldType = "pistol"
