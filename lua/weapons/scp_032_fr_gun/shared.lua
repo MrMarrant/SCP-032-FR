@@ -47,7 +47,9 @@ SWEP.Automatic = false
 -- Variables Personnal to this weapon --
 -- [[ STATS WEAPON ]]
 SWEP.PrimaryCooldown = 2
+SWEP.ReloadCooldown = 4
 SWEP.CurrentPrimaryCooldown = CurTime()
+SWEP.CurrentReloadCooldown = CurTime()
 
 function SWEP:Initialize()
 	self:SetHoldType( self.HoldType )
@@ -59,16 +61,7 @@ function SWEP:Equip()
 end
 
 function SWEP:Deploy()
-	local ply = self:GetOwner()
-
-	self:SendWeaponAnim( ACT_VM_IDLE )
-
-	if (ply:IsPlayer()) then
-		local VMAnim = ply:GetViewModel()
-		local NexIdle = VMAnim:SequenceDuration() / VMAnim:GetPlaybackRate() 
-		self:SetNextPrimaryFire( CurTime() + NexIdle + 0.1 ) --? We add 0.1s for avoid to cancel primary animation
-	end
-
+	self:ActionAnim(ACT_VM_DRAW)
 	return true
 end
 
@@ -81,9 +74,7 @@ function SWEP:PrimaryAttack()
 	
 		ply.SCP032FR_AmmoLeft = ply.SCP032FR_AmmoLeft - 1
 	
-		local VMAnim = ply:GetViewModel()
-	
-		VMAnim:SendViewModelMatchingSequence( VMAnim:LookupSequence( "shoot" ) )
+		self:ActionAnim(ACT_VM_PRIMARYATTACK)
 		scp_032_fr.Shoot(ply.SCP032FR_AmmoType, self)
 		self.CurrentPrimaryCooldown = CurrentTime + self.PrimaryCooldown
 	else
@@ -98,6 +89,11 @@ end
 
 function SWEP:Reload()
 	if CLIENT then return end
+	local CurrentTime = CurTime()
+	if (self.CurrentReloadCooldown < CurrentTime) then
+		self:ActionAnim(ACT_VM_RELOAD)
+		self.CurrentReloadCooldown = CurrentTime + self.ReloadCooldown
+	end
 end
 
 function SWEP:SetAmmoType()
@@ -105,4 +101,18 @@ function SWEP:SetAmmoType()
     if (not IsValid(ply.SCP032FR_AmmoType)) then
         scp_032_fr.InitAmmoType(ply, self)
     end
+end
+
+function SWEP:ActionAnim(animToPlay)
+	self:SendWeaponAnim(animToPlay)
+	self:NextIdle()
+end
+
+function SWEP:NextIdle()
+	local VMAnim = self:GetOwner():GetViewModel()
+	local NexIdle = math.Round(VMAnim:SequenceDuration() / VMAnim:GetPlaybackRate(), 2) - 0.1
+	timer.Simple(NexIdle, function()
+		if not self:IsValid() then return end
+		self:SendWeaponAnim(ACT_VM_IDLE)
+	end)
 end
