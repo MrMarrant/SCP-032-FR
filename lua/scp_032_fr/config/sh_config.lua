@@ -80,7 +80,7 @@ SCP_032_FR_CONFIG.SetConvarClientSide = "SCP_032_FR_CONFIG.SetConvarClientSide"
 SCP_032_FR_CONFIG.SetConvarInt = "SCP_032_FR_CONFIG.SetConvarInt"
 
 -- Model Path
-SCP_032_FR_CONFIG.ModelBowling = "models/props_borealis/bluebarrel001.mdl"
+SCP_032_FR_CONFIG.ModelBowling = "models/hunter/misc/sphere025x025.mdl" -- TODO : Material bowling
 SCP_032_FR_CONFIG.ModelTrain = "models/props_borealis/bluebarrel001.mdl"
 SCP_032_FR_CONFIG.ModelQuartz = "models/props_borealis/bluebarrel001.mdl"
 SCP_032_FR_CONFIG.ModelPlasticCup = "models/props_borealis/bluebarrel001.mdl"
@@ -88,3 +88,8 @@ SCP_032_FR_CONFIG.ModelBlueWhale = "models/props_borealis/bluebarrel001.mdl"
 SCP_032_FR_CONFIG.ModelSCP032FR = "models/scp_032fr/scp_032fr.mdl"
 SCP_032_FR_CONFIG.ElectricOrb = "models/props_borealis/bluebarrel001.mdl"
 SCP_032_FR_CONFIG.FireShoot = "models/props_borealis/bluebarrel001.mdl"
+
+
+SCP_032_FR_CONFIG.Sounds = {}
+SCP_032_FR_CONFIG.Sounds.BowlingShoot = Sound("scp_032fr/sfx/nice_shot.mp3")
+SCP_032_FR_CONFIG.Sounds.EmptyAmmo = Sound("scp_032fr/sfx/empty_ammo.mp3")

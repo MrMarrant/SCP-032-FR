@@ -23,10 +23,6 @@ hook.Add( "PlayerDeath", "PlayerDeath.SCP032FR_Died", function( victim, inflicto
     victim:StopSound("")
     -- TODO : Set coté client aussi 
     victim.SCP023_AffectTinnitus = nil
-    if (inflictor:GetClass() == 'bowling_scp032fr') then
-        -- TODO : NICE STRIKE de nintendo.
-        victim:EmitSound("")
-    end
 end)
 
 util.AddNetworkString(SCP_032_FR_CONFIG.SendDataAmmo)

@@ -18,7 +18,6 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-    -- TODO : Bowling Model
 	self:SetModel( SCP_032_FR_CONFIG.ModelBowling )
 	self:RebuildPhysics()
 end
@@ -36,11 +35,15 @@ end
 -- TODO : Physic SFX
 function ENT:PhysicsCollide( data, physobj )
     local EntHit = data.HitEntity
-	if (EntHit:IsPlayer()) then
-		EntHit:TakeDamage( data.Speed/0.7, self, self )
-    end
 	if data.DeltaTime > 0.2 then
 		if data.Speed > 250 then
+			if (EntHit:IsPlayer()) then
+				local damage = data.Speed/0.7
+				EntHit:TakeDamage( damage, self, self )
+				if (damage >= EntHit:Health()) then
+					EntHit:EmitSound(SCP_032_FR_CONFIG.Sounds.BowlingShoot)
+				end
+			end
 			self:EmitSound( "physics/plastic/plastic_box_impact_hard".. math.random(1, 4)..".wav", 75, math.random( 100, 110 ) )	
 		else
 			self:EmitSound( "physics/plastic/plastic_box_impact_soft".. math.random(1, 4)..".wav", 75, math.random( 100, 110 ) )		

@@ -70,16 +70,15 @@ function SWEP:PrimaryAttack()
 	local CurrentTime = CurTime()
 	if (self.CurrentPrimaryCooldown < CurrentTime) then
 		local ply = self:GetOwner()
-		if (ply.SCP032FR_AmmoLeft <= 0) then return end
-	
-		ply.SCP032FR_AmmoLeft = ply.SCP032FR_AmmoLeft - 1
-	
-		self:ActionAnim(ACT_VM_PRIMARYATTACK)
-		scp_032_fr.Shoot(ply.SCP032FR_AmmoType, self)
-		self.CurrentPrimaryCooldown = CurrentTime + self.PrimaryCooldown
-	else
-		-- TODO : Add a sound when the weapon is in CD.
-		self:EmitSound("")
+		if (ply.SCP032FR_AmmoLeft <= 0) then 
+			ply:EmitSound(SCP_032_FR_CONFIG.Sounds.EmptyAmmo, 75, math.random( 100, 110 ) )
+			self:ActionAnim(ACT_VM_PRIMARYATTACK_EMPTY)
+		else
+			ply.SCP032FR_AmmoLeft = math.Clamp(ply.SCP032FR_AmmoLeft - 1, 0, ply.SCP032FR_AmmoLeft)
+			self:ActionAnim(ACT_VM_PRIMARYATTACK)
+			scp_032_fr.Shoot(ply.SCP032FR_AmmoType, self)
+			self.CurrentPrimaryCooldown = CurrentTime + self.PrimaryCooldown
+		end
 	end
 end
 
