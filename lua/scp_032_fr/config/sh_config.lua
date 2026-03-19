@@ -93,3 +93,6 @@ SCP_032_FR_CONFIG.FireShoot = "models/props_borealis/bluebarrel001.mdl"
 SCP_032_FR_CONFIG.Sounds = {}
 SCP_032_FR_CONFIG.Sounds.BowlingShoot = Sound("scp_032fr/sfx/nice_shot.mp3")
 SCP_032_FR_CONFIG.Sounds.EmptyAmmo = Sound("scp_032fr/sfx/empty_ammo.mp3")
+SCP_032_FR_CONFIG.Sounds.PopShot = Sound("scp_032fr/sfx/pop_shot.mp3")
+SCP_032_FR_CONFIG.Sounds.TrainShoot = Sound("scp_032fr/sfx/train_shot.mp3")
+SCP_032_FR_CONFIG.Sounds.TrainHorn = Sound("scp_032fr/sfx/train_horn.mp3")

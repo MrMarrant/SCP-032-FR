@@ -213,14 +213,16 @@ end
 --]]
 -- TODO : A test
 function scp_032_fr.V(gun)
-    local posEQ = gun:GetOwner():GetPos()
+    local ply = gun:GetOwner()
+    local posEQ = ply:GetPos()
     local duration = math.random(20, 30)
     local radius = 9999
     local quakeFrequency = 0.1
+    local allEnts = ents.GetAll()
 
     util.ScreenShake( posEQ, 5, 20, duration, radius )
     timer.Create("SCP032FR_EarthquakeTimer", quakeFrequency, 0, function()
-        for _, ent in pairs(ents.GetAll()) do
+        for _, ent in pairs(allEnts) do
             if ent:GetClass() == "prop_physics" and posEQ:Distance(ent:GetPos()) <= radius then
                 scp_032_fr.QuakeEffect(ent)
             end
@@ -231,7 +233,7 @@ function scp_032_fr.V(gun)
         timer.Remove("SCP032FR_EarthquakeTimer")
     end)
     -- TODO : SFX
-    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+    ply:EmitSound("", 75, math.random(90, 110))
 end
 
 --[[
@@ -267,12 +269,10 @@ end
 * @param gun : Entity
 --]]
 function scp_032_fr.MMII(gun)
-    -- TODO : Spawn the model gun (not fast, it just have to travel 2-3m)
     local ply = gun:GetOwner()
 	local ent = scp_032_fr.CreateEnt(ply, 50, SCP_032_FR_CONFIG.ModelSCP032FR)
     scp_032_fr.ShootAnEnt(ply, ent, 300)
-    -- TODO : SFX
-    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+    ply:EmitSound(SCP_032_FR_CONFIG.Sounds.PopShot, 75, math.random(90, 110))
     scp_032_fr.RemoveByTimer(ent)
 end
 
@@ -285,8 +285,7 @@ function scp_032_fr.X(gun)
     local ply = gun:GetOwner()
 	local ent = scp_032_fr.CreateEnt(ply, 50, "", ents.Create( "bowling_scp032fr" ))
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
-    -- TODO : SFX
-    ply:EmitSound("", 75, math.random(90, 110))
+    ply:EmitSound(SCP_032_FR_CONFIG.Sounds.BowlingShoot, 75, math.random(90, 110))
     scp_032_fr.RemoveByTimer(ent)
 end
 
@@ -296,11 +295,10 @@ end
 --]]
 function scp_032_fr.XXIII(gun)
     local ply = gun:GetOwner()
-	local ent = scp_032_fr.CreateEnt(ply, 50, SCP_032_FR_CONFIG.ModelTrain)
+	local ent = scp_032_fr.CreateEnt(ply, 50, "", ents.Create( "train_scp032fr" ))
 	scp_032_fr.ShootAnEnt(ply, ent, 1000)
     scp_032_fr.RemoveByTimer(ent)
-    -- TODO : SFX
-    gun:GetOwner():EmitSound("", 75, math.random(90, 110))
+    ply:EmitSound(SCP_032_FR_CONFIG.Sounds.TrainShoot, 75, math.random(90, 110))
 end
 
 --[[
