@@ -20,7 +20,7 @@ ENT.Type = "anim"
 ENT.Base = "base_gmodentity"
 ENT.Author = "MrMarrant"
 ENT.PrintName = "Blue Whale SCP-032-FR"
-ENT.Spawnable = false
+ENT.Spawnable = true
 ENT.Category = "Other"
 
 -- Set up every var related to the entity we will use

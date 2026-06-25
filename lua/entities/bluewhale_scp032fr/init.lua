@@ -18,12 +18,20 @@ AddCSLuaFile("shared.lua")
 include("shared.lua")
 
 function ENT:Initialize()
-    -- TODO : Blue Whale Model
 	self:SetModel( SCP_032_FR_CONFIG.ModelBlueWhale )
 	self:RebuildPhysics()
 	self:InitVar()
 	self:SetMaxHealth( 500 )
 	self:StartLoopingSound( "" ) -- TODO : Son de balène loop
+	self:ResetSequence(0)
+	PrintTable(self:GetSequenceList())
+	print(self:SequenceDuration())
+	timer.Simple( self:SequenceDuration(), function() 
+		if (IsValid(self) and not self:GetIsDead()) then
+			print("loop")
+			self:SetSequence(1) -- TODO! les anims 1 & 2 ne fonctionnent pas une raison quelconque
+		end
+	end)
 end
 
 -- Intialise the physic of the entity
@@ -42,11 +50,13 @@ function ENT:InitVar( )
 end
 
 function ENT:OnTakeDamage( damage )
+	if (self:GetIsDead()) then return end
 	if (damage >= self:Health()) then
+		print("ded")
 		self:EmitSound( "" ) -- TODO : Son de râle d'agonie
 		self:SetIsDead( true )
 		self:StopSound( "" ) -- TODO : Arrêt du son de balène loop
-		-- TODO : Animation de mort
+		self:ResetSequence(2)
 	else
 		self:EmitSound( "" ) -- TODO : Son de balène qui se fait taper
 	end

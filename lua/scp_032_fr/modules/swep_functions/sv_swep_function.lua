@@ -177,7 +177,7 @@ end
 * Shoot an electrib orb that flash nearby player & 
 * burn those who are too close
 --]]
--- TODO : A test
+-- TODO : Faire un effet de boule électrique
 function scp_032_fr.III(gun)
     local ply = gun:GetOwner()
     local pos = scp_032_fr.GetPosForward(ply, 50)
@@ -232,8 +232,7 @@ function scp_032_fr.V(gun)
     timer.Simple(duration, function()
         timer.Remove("SCP032FR_EarthquakeTimer")
     end)
-    -- TODO : SFX
-    ply:EmitSound("", 75, math.random(90, 110))
+    EmitSound(SCP_032_FR_CONFIG.Sounds.Earthquake, posEQ, ply:EntIndex(), CHAN_AUTO, 1, 75, math.random(90, 110))
 end
 
 --[[
